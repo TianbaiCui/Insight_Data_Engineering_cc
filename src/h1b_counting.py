@@ -17,8 +17,11 @@ def extract(input):
     1) the case status;
     2) the occupation name;
     3) the state where the work will take place.
-
     Only store state and occupation names if status is 'CERTIFIED'.
+
+    Argument: input -- the path to the dataset needs to be analyzed
+    Return:   states -- the list of state names (string) with 'CERTIFIED' case status
+              occupations -- the list of occupation names (string) with 'CERTIFIED' case status
     """
     states = []      # Store the working state.
     occupations = [] # Store the occupational name.
@@ -53,6 +56,12 @@ def stat(states, occupations):
     1) count: count the number of certified applications.
     2) sort: sort by the number of certified applications.
     3) pick: pick the top 10 occupations and states.
+
+    Arguments: states -- the list of state names (a list of strings)
+               occupations -- the list of occupation names (a list of strings)
+    Return:    state_count[0:9] -- the top 10 states with certified applications (a list of tuples)
+               occupation_count[0:9] -- the top 10 occupations with certified applications (a list of tuples)
+               total -- the total number of certified applications (an integer)
     """
     state_dict = {}  # use dictionary to count
     occupation_dict ={}  # use dictionary to count
@@ -74,37 +83,45 @@ def stat(states, occupations):
     # sort the list reversely by the count, then alphabetically by its name
     state_count.sort(key=lambda x: (-x[1], x[0]))
     occupation_count.sort(key=lambda x: (-x[1], x[0]))
-    # return the top 10 results
+    # return the top 10 results and the total number of certified applications
     return state_count[0:9], occupation_count[0:9], total
 
-def add_precent(feature_count, total):
+def add_percent(feature_count, total):
     """
     This function adds an "percentage" column to the "feature_count" list.
     The count of each feature is stored in the second column of "feature_count".
     The percentage is equal to the count divided by "total" times 100%.
-    """
-    with_precent = []
-    for row in feature_count:
-        with_precent.append(row + tuple(("{0:.1f}%".format(row[1]*100.0 / total),)))
-        # The percentage is rounded off to 1 decimal place.
-    return with_precent
 
-def output(header, list_of_tuples, path_and_name):
+    Arguments: feature_count -- a list of tuples, each tuple has two elements
+               total -- the total number of certified applications (an integer)
+    Return: with_percent -- a list of tuples, each tuple has three elements
     """
-    This function generate the output file with the given 'path_and_name'.
+    with_percent = []
+    for row in feature_count:
+        with_percent.append(row + tuple(("{0:.1f}%".format(row[1]*100.0 / total),)))
+        # The percentage is rounded off to 1 decimal place.
+    return with_percent
+
+def output(header, list_of_tuples, path):
+    """
+    This function generate the output file with the given 'path'.
     'header' is a string of the name of each field of the 'list_of_tuples'.
     Different field names shoule be separated by semicolon (;).
+
+    Arguments: header -- the field names of the list_of_tuples
+               list_of_tuples -- the data will be saved as a semicolon-separated txt file
+               path -- path to the output file
     """
     if header.count(';') != len(list_of_tuples[0]) - 1:
-        print 'ERROR output file: %s \n Number of field names does not match with the number of fields!' % path_and_name
+        print 'ERROR output file: %s \n Number of field names does not match with the number of fields!' % path
     else:
-        outfile = open(path_and_name, "w")
+        outfile = open(path, "w")
         outfile.write('%s\n' % header) # Write the header as the first row.
         for row in list_of_tuples:
             # Write each row of 'list_of_tuples' in a semicolon separated format.
             outfile.write('%s;%d;%s\n' % row)
         outfile.close
-        print 'Finish output file: %s' % path_and_name
+        print 'Finish output file: %s' % path
 
 if __name__=="__main__":
     # Read the input/output file names from the arguments.
@@ -122,8 +139,8 @@ if __name__=="__main__":
     states, occupations = extract(input)
     # Step 2: Data analysis
     state_stat, occupation_stat, total = stat(states, occupations)
-    state_stat = add_precent(state_stat, total)
-    occupation_stat = add_precent(occupation_stat, total)
+    state_stat = add_percent(state_stat, total)
+    occupation_stat = add_percent(occupation_stat, total)
     # Step 3: Output Results
     header_state = 'TOP_STATES;NUMBER_CERTIFIED_APPLICATIONS;PERCENTAGE'
     header_occupation = 'TOP_OCCUPATIONS;NUMBER_CERTIFIED_APPLICATIONS;PERCENTAGE'
