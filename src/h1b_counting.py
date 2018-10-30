@@ -20,7 +20,7 @@ def extract(input):
     Only store state and occupation names if status is 'CERTIFIED'.
 
     Argument: input -- the path to the dataset needs to be analyzed
-    Return:   states -- the list of state names (string) with 'CERTIFIED' case status
+    Returns:   states -- the list of state names (string) with 'CERTIFIED' case status
               occupations -- the list of occupation names (string) with 'CERTIFIED' case status
     """
     states = []      # Store the working state.
@@ -59,7 +59,7 @@ def stat(states, occupations):
 
     Arguments: states -- the list of state names (a list of strings)
                occupations -- the list of occupation names (a list of strings)
-    Return:    state_count[0:9] -- the top 10 states with certified applications (a list of tuples)
+    Returns:    state_count[0:9] -- the top 10 states with certified applications (a list of tuples)
                occupation_count[0:9] -- the top 10 occupations with certified applications (a list of tuples)
                total -- the total number of certified applications (an integer)
     """
@@ -126,9 +126,9 @@ def output(header, list_of_tuples, path):
 if __name__=="__main__":
     # Read the input/output file names from the arguments.
     if len(sys.argv[1:]) != 3:
-        print "ERROR: Check the number of arguments!"
+        print "ERROR: Check the arguments! The number of arguments must equal 3!"
     else:
-        for i in [1, 2, 3]:
+        for i in [1, 2, 3]: # Passing the command line arguments.
             if re.search('/input/', sys.argv[i], re.IGNORECASE):
                 input = sys.argv[i]
             if re.search('state', sys.argv[i], re.IGNORECASE):
